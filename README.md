@@ -6,14 +6,13 @@ Scandiff is a PowerShell script to automate host discovery and scanning with nma
 IMPORTANT! This performs a discovery scan looking for open ports first,before doing a scan using the default nmap portlist. This is done to speed up scanning across large IP spaces. If no open ports are discovered, this script will assume there are no live hosts and will exit.  This behavior can be suppressed by specifying -discovery 0.
 
 There are several assumptions made about the installation path of nmap and 7Zip.  You'll need to modify these for your environment.
+
 Assumptions:
     nmap: Assume this is installed at C:\Program Files (x86)\Nmap\nmap.exe
     ndiff: Assume this is installed at C:\Program Files (x86)\Nmap\ndiff.exe
     7Zip: Assume this is installed at C:\Program Files\7-Zip\7z.exe
-        
-    This script assumes you've copied out previous data if you want to keep it. Output files will
-    be removed each time this script is run and replaced with new files with the exception of the
-    diff file.  This file will be kept to compare against previous runs.
+  
+This script assumes you've copied out previous data if you want to keep it. Output files will be removed each time this script is run and replaced with new files with the exception of the diff file.  This file will be kept to compare against previous runs.
     
 Using scandiff:
 .\scandiff-0.9.ps1 -frequency [daily|weekly] -basename foo -outdir X:\path\to\output\directory -targets (nmap-style target specification or path to file containing targets) -email [0|1] -discover [0|1]
