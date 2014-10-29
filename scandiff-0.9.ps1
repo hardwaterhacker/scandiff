@@ -12,17 +12,14 @@ script.
 Frequency is either daily or weekly.
 
 Daily performs discovery using a limited set of ports and performs an nmap scan
-using the default nmap port list.
+using the default nmap TCP port list.
 
 Weekly performs a discovery using a limited set of ports and performs an nmap 
 scan using the full TCP port range and a limited set of UDP ports defined in
 the script.
 
 .PARAMETER basename
-The basename parameter specifies the base name used for all output files.  If 
-basename is not provided, the basename defaults to MM-DD-YYYY.  NOTE: this will 
-cause ndiff to falsely determine no previous nmap results exist, thus the 
-specification of a basename is recommended.
+The basename parameter specifies the base name used for all output files.
 
 .PARAMETER targets
 This is the host or hosts to be scanned using the nmap-style host declaration,
@@ -68,6 +65,7 @@ Assumptions:
 TO-DO:
     Ability to read config options from a config file
     Option to suppress zip output
+    Error handling
 
 .LINK
 https://github.com/hardwaterhacker/scandiff
@@ -75,8 +73,8 @@ https://github.com/hardwaterhacker/scandiff
 #>
 
 param (
-    [string]$frequency = $(throw "frequency is required: daily or weekly"),
-    [string]$basename = (Get-Date).ToShortDateString().Replace('/', '-'),
+    [string]$frequency = $(throw "Frequency is required: daily or weekly."),
+    [string]$basename =  $(throw "Please specify a basename for output files."),
     [string]$outdir = (Split-Path -Parent $MyInvocation.MyCommand.Path),
     [string]$targets = $(throw "Please provide hosts to be scanned (nmap-style hosts definition)."),
     [bool]$email = 1,
@@ -199,7 +197,7 @@ The results for the $frequency Nmap scan and diffs for $targets are attached.
 # Set up variables used by mutliple functions
 $timeStamp = Get-Date
 $date = $timeStamp.ToShortDateString().Replace('/', '-')
-$scanOpts = "-sS -sU -Pn -T4 -v"
+$scanOpts = "-sS -Pn -T4 -v"
 $nmap = "C:\Program Files (x86)\Nmap\nmap.exe" 
 $ndiff = "C:\Program Files (x86)\Nmap\ndiff.exe"
 $7zexe = "C:\Program Files\7-Zip\7z.exe"
@@ -237,6 +235,8 @@ if ( Test-Path $targets ) {
 if ( $discover ) {
     ## Start of discovery section
 
+    # Add -sU for host discovery
+    $scanOpts = "-sS -sU -Pn -T4 -v"
     # define the ports and outputFile for a discovery scan
     # CHANGE THESE PORTS
     # Tune to test for known ports on your network to increase discovery accuracy
@@ -261,6 +261,9 @@ if ( $discover ) {
     ## need to pass targets as an input file using -iL
     ## $nmapTargets will replace $scanRange for nmap targets definition
     $nmapTargets = "-iL " + $liveHostsFile
+    
+    # remove -sU from $scanOpts
+    $scanOpts = "-sS -Pn -T4 -v"
 
     ## End of discovery section
 }
@@ -279,6 +282,7 @@ else {
         $outputFile = "-oX " + $outputDir + $basename + "-daily.xml"
         }
     elseif ($frequency -eq "weekly") {
+        $scanOpts += " -sU "
         $ports = "-p U:53,123,259-260,2746,5004,8116,T:1-65535"
         $outputFile = "-oX " + $outputDir + "weekly\" + $basename + "-weekly.xml"
         }
