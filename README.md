@@ -26,14 +26,14 @@ PARAMETER frequency<br>
 Frequency is either daily or weekly.
 
 Daily performs discovery using a limited set of ports and performs an nmap scan
-using the default nmap port list.
+using the default nmap TCP port list.
 
 Weekly performs a discovery using a limited set of ports and performs an nmap 
 scan using the full TCP port range and a limited set of UDP ports defined in
 the script.
 
 PARAMETER basename<br>
-The basename parameter specifies the base name used for all output files.  If basename is not provided, the basename defaults to MM-DD-YYYY.  NOTE: this will cause ndiff to falsely determine no previous nmap results exist, thus the specification of a basename is recommended.
+The basename parameter specifies the base name used for all output files.
 
 PARAMETER targets<br>
 This is the host or hosts to be scanned using the nmap-style host declaration,
@@ -58,7 +58,7 @@ This parameter controls whether discovery is performed.  Discovery is performed 
 <b>Adapting scandiff to your environment:</b><br>
 The frequency parameter is used to designate whether a limited-scope or larger-scope port scan should be performed.  Daily uses the default TCP and UDP port list.  Weekly specifies a list of specific UDP ports and TCP ports 1-65535.  These can be modified in the script as needed.
 
-$scanOpts specifies the nmap scan type and other option flags.  Scandiff was written to use "-sS -sU -Pn -T4 -v" for discovery scans and adds -sV to perform version detection on discovered ports in the port scan section.
+$scanOpts specifies the nmap scan type and other option flags.  Scandiff was written to use "-sS -Pn -T4 -v" for discovery scans and adds "-sV" to perform a version detection on discovered ports in the port scan section.
 
 $zipPass specifies the password passed to 7Zip to encrypt output files to be attached to the email generated.  Currently, the script does not support suppressing 7Zip compression and encryption of output files.
 
