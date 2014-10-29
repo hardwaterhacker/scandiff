@@ -67,3 +67,4 @@ The sendMail function can be modified to use any email server desired.  $EmailFr
 TO-DO:
 * Ability to read config options from a config file
 * Option to suppress zip output
+* Add error handling
